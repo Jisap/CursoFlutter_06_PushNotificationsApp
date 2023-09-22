@@ -10,10 +10,12 @@ part 'notifications_state.dart';
 
 class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { // Como un provider de estado y sus métodos
   
-  FirebaseMessaging messaging = FirebaseMessaging.instance;       // Permite escuchar y emitir notifications
+  FirebaseMessaging messaging = FirebaseMessaging.instance;       // Permite escuchar y emitir notifications (instancia de firebase messagin)
   
+  // Constructor
   NotificationsBloc() : super(const NotificationsState()) {
     on<NotificationStatusChanged>( _notificationsStatusChanged ); // Escuchamos la emisión del evento relativo al cambio de status en las notif.push
+    _initialStatusCheck();                                        // Obtenemos el status actual
   }
 
   static Future<void> initializeFCM() async{                      // Inicialización de Firebase Cloud Messagin
@@ -28,7 +30,22 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
         status: event.status                                                                             // con el estado del evento (nuevo status)
       )
     );
+    _getFCMToken();
   }
+
+  void _initialStatusCheck() async{
+    final settings = await messaging.getNotificationSettings();   // De la instancia de firebase messagin obtengo su estado
+    add( NotificationStatusChanged(settings.authorizationStatus));// Emitimos un nuevo estado con el estado de la authorizationStatus
+  }
+
+  void _getFCMToken() async {
+    
+    if( state.status != AuthorizationStatus.authorized ) return; // Sino esta autorizado no muestro el token
+    final token = await messaging.getToken();                    // Si si lo esta obtengo el token y lo muestro.
+    print(token);
+  }
+
+
 
   void requestPermission() async { // Llamaremos a esta configuración cuando toquemos en la appbar el engrane
     NotificationSettings settings = await messaging.requestPermission( 
