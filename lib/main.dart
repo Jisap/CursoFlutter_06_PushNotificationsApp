@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:push_app/config/router/app_router.dart';
@@ -8,6 +9,7 @@ import 'config/theme/app_theme.dart';
 void main() async{
 
   WidgetsFlutterBinding.ensureInitialized(); // Es necesario para poder usar las API de Flutter que dependen de la plataforma(Ios/adroid), como las notificaciones push.
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler); // Permite recibir notifications en segundo plano
   await NotificationsBloc.initializeFCM();   // Inicializa el sistema de cloud messaging de firebase 
 
   runApp(
