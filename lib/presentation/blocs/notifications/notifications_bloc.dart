@@ -27,7 +27,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
   // Constructor
   NotificationsBloc() : super(const NotificationsState()) {
     on<NotificationStatusChanged>( _notificationsStatusChanged ); // Escuchamos la emisión del evento relativo al cambio de status -> nuevo estado -> token
-    on<NotificationReveiced>(_onPushMessageReceived);             // Escuchamos la emisión del evento relativo al mensaje recivido -> nuevo estado
+    on<NotificationReveiced>(_onPushMessageReceived);             // Escuchamos la emisión del evento relativo al mensaje recibido -> nuevo estado
     _initialStatusCheck();                                        // Obtenemos el status actual -> evento cambio de status
     _onForegroundMessage();                                       // Abrimos el stream de mensajes desde firebase
   }
@@ -38,7 +38,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
     );
   }
 
-  void _notificationsStatusChanged( NotificationStatusChanged event, Emitter<NotificationsState> emit ){ // Si cambio el estado de status
+  void _notificationsStatusChanged( NotificationStatusChanged event, Emitter<NotificationsState> emit ){ // Si cambio el estado de status (toque en el engrane)
     emit(                                                                                                // emitimos 
       state.copyWith(                                                                                    // un nuevo estado (copia) 
         status: event.status                                                                             // con el estado del evento (nuevo status)
@@ -47,10 +47,10 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
     _getFCMToken(); // y obtenemos el token de autorización si estamos authorized
   }
 
-  void _onPushMessageReceived( NotificationReveiced event, Emitter<NotificationsState> emit ){ // Si cambio el estado de status
+  void _onPushMessageReceived( NotificationReveiced event, Emitter<NotificationsState> emit ){           // Si cambio el estado de pushMessage (nuevo message)
     emit(                                                                                                // emitimos 
       state.copyWith(                                                                                    // un nuevo estado (copia) 
-        notifications: [ event.pushMessage, ...state.notifications ]                                                                            // con el estado del evento (nuevo status)
+        notifications: [ event.pushMessage, ...state.notifications ]                                     // con el nuevo estado de notification y sus nuevos mensajes
       )
     );
     _getFCMToken(); // y obtenemos el token de autorización si estamos authorized
@@ -81,16 +81,16 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
         : message.notification!.apple?.imageUrl
     );
       
-    add(NotificationReveiced(notification));
+    add(NotificationReveiced(notification));                      // Añadimos el evento de recepción de mensajes al flujo de datos que Bloc escucha
   }
 
   void _onForegroundMessage(){                                    // Recibe el RemoteMessage como un
     FirebaseMessaging.onMessage.listen(( _handleRemoteMessage )); // stream de datos cuando la aplicación esta activa
   }
 
-
-  void requestPermission() async { // Llamaremos a esta configuración cuando toquemos en la appbar el engrane
-    NotificationSettings settings = await messaging.requestPermission( 
+  
+  void requestPermission() async {                                     // Llamaremos a esta configuración cuando toquemos en la appbar el engrane 
+    NotificationSettings settings = await messaging.requestPermission( // requestPermission hace una solicitud al sistema operativo del dispositivo para mostrar notificaciones
       alert: true,
       announcement: false,
       badge: true,
@@ -100,6 +100,6 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
       sound: true,
     );
 
-    add(NotificationStatusChanged( settings.authorizationStatus)); // Añadimos el evento de escucha del cambio de status
+    add(NotificationStatusChanged( settings.authorizationStatus)); // Añadimos el evento de escucha del cambio de status al flujo de datos que Bloc está escuchando
   }
 }
