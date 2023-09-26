@@ -29,7 +29,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
     on<NotificationStatusChanged>( _notificationsStatusChanged ); // Escuchamos la emisión del evento relativo al cambio de status -> nuevo estado -> token
     on<NotificationReveiced>(_onPushMessageReceived);             // Escuchamos la emisión del evento relativo al mensaje recibido -> nuevo estado
     _initialStatusCheck();                                        // Obtenemos el status actual -> evento cambio de status
-    _onForegroundMessage();                                       // Abrimos el stream de mensajes desde firebase
+    _onForegroundMessage();                                       // Abrimos el stream de mensajes desde firebase (usando _handleRemoteMesagge)
   }
 
   static Future<void> initializeFCM() async{                      // Inicialización de Firebase Cloud Messagin
@@ -102,4 +102,13 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
 
     add(NotificationStatusChanged( settings.authorizationStatus)); // Añadimos el evento de escucha del cambio de status al flujo de datos que Bloc está escuchando
   }
+
+  PushMessage? getMessageById( String pushMessageId ){
+    final exist = state.notifications.any((element) => element.messageId == pushMessageId );
+    if( !exist ) return null;
+
+    return state.notifications.firstWhere((element) => element.messageId == pushMessageId);
+  }
+
+
 }
