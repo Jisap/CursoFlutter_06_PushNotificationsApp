@@ -67,7 +67,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
     print(token);
   }
 
-  void _handleRemoteMessage( RemoteMessage message ){ // RemoteMessage recibe el mensaje enviado desde firebase
+  void handleRemoteMessage( RemoteMessage message ){ // RemoteMessage recibe el mensaje enviado desde firebase
     if (message.notification == null) return;  
 
     final notification = PushMessage( // RemoteMessage hay que "limpiarlo"
@@ -85,7 +85,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
   }
 
   void _onForegroundMessage(){                                    // Recibe el RemoteMessage como un
-    FirebaseMessaging.onMessage.listen(( _handleRemoteMessage )); // stream de datos cuando la aplicación esta activa
+    FirebaseMessaging.onMessage.listen(( handleRemoteMessage ));  // stream de datos cuando la aplicación esta activa
   }
 
   
