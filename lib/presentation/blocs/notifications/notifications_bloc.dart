@@ -13,18 +13,16 @@ part 'notifications_event.dart';
 part 'notifications_state.dart';
 
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async { // Stream de datos cuando la app esta en 2º plano
-
   await Firebase.initializeApp();
-
   print("Handling a background message: ${message.messageId}");
 }
-
 
 
 class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { // Como un provider de estado y sus métodos
   
   FirebaseMessaging messaging = FirebaseMessaging.instance;       // Permite escuchar y emitir notifications (instancia de firebase messagin)
-  
+  int pushNumberId = 0;
+
   // Constructor
   NotificationsBloc() : super(const NotificationsState()) {
     on<NotificationStatusChanged>( _notificationsStatusChanged ); // Escuchamos la emisión del evento relativo al cambio de status -> nuevo estado -> token
@@ -82,6 +80,13 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
         : message.notification!.apple?.imageUrl
     );
       
+    LocalNotifications.showLocalNotification(
+      id: ++pushNumberId,// Establecemos id diferente de la push notification
+      body: notification.body,
+      data: notification.data.toString(),
+      title: notification.title,
+    );
+
     add(NotificationReveiced(notification));                      // Añadimos el evento de recepción de mensajes al flujo de datos que Bloc escucha
   }
 
@@ -101,7 +106,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
       sound: true,
     );
 
-    await LocalNotificatons.requestPermissionLocalNotifications(); // Solicitar permiso para las Local Notifications
+    await LocalNotifications.requestPermissionLocalNotifications(); // Solicitar permiso para las Local Notifications
 
     add(NotificationStatusChanged( settings.authorizationStatus)); // Añadimos el evento de escucha del cambio de status al flujo de datos que Bloc está escuchando
   }

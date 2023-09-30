@@ -2,9 +2,10 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
-class LocalNotificatons{
+class LocalNotifications{
 
-  static requestPermissionLocalNotifications() async{ // Función que solicita los permisos de local notifications al SO
+  static requestPermissionLocalNotifications() async{ // Función que solicita los permisos de local notifications al SO (Autoriza si o no)
+
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
@@ -24,5 +25,36 @@ class LocalNotificatons{
     await flutterLocalNotificationsPlugin.initialize( // Inicializamos el plugin con la inicialización de las local notifications
       initializationSettings,
     );
+  }
+
+  static void showLocalNotification({
+    required int id,
+    String? title,
+    String? body,
+    String? data,
+  }) {
+
+    const androidDetails = AndroidNotificationDetails( // Constructor de una instancia de AndroidNotificationDetails
+      'channelId', 
+      'channelName',
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound('notification'),
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    const notificationDetails = NotificationDetails(  // Instancia
+      android: androidDetails,
+    );
+
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin(); // Permisos
+
+    flutterLocalNotificationsPlugin.show( // Muestra la local notification con el payload y su configuración
+      id, 
+      title, 
+      body, 
+      notificationDetails, 
+      payload: data 
+    ); 
   }
 }

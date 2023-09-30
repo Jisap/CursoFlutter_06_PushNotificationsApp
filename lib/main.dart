@@ -10,8 +10,8 @@ import 'config/theme/app_theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Es necesario para poder usar las API de Flutter que dependen de la plataforma(Ios/adroid), como las notificaciones push.
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler); // Permite recibir notifications en segundo plano
-  await NotificationsBloc.initializeFCM(); // Inicializa el sistema de cloud messaging de firebase
-  await LocalNotificatons.initializeLocalNotifications(); // Inicialización de las local notifications para android
+  await NotificationsBloc.initializeFCM();                                   // Inicializa el sistema de cloud messaging de firebase
+  await LocalNotifications.initializeLocalNotifications();                   // Inicialización de las local notifications para android
 
   runApp(MultiBlocProvider(
       providers: [BlocProvider(create: (_) => NotificationsBloc())],
