@@ -4,7 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LocalNotifications{
 
-  static requestPermissionLocalNotifications() async{ // Función que solicita los permisos de local notifications al SO (Autoriza si o no)
+  static Future<void> requestPermissionLocalNotifications() async{ // Función que solicita los permisos de local notifications al SO (Autoriza si o no)
 
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin(); // PLugin
     await flutterLocalNotificationsPlugin                                                                      // Esperamos que para android,

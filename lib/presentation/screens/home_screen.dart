@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: context.select( 
-          (NotificationsBloc bloc ) => Text('${ bloc.state.status }') // Estado de la notificación
+          (NotificationsBloc bloc ) => Text('${ bloc.state.status }')  // Estado de la notificación
         ),
         actions: [
           IconButton(onPressed: (){

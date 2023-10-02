@@ -13,10 +13,12 @@ void main() async {
   await NotificationsBloc.initializeFCM();                                   // Inicializa el sistema de cloud messaging de firebase
   await LocalNotifications.initializeLocalNotifications();                   // Inicialización de las local notifications para android
 
-  runApp(MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => NotificationsBloc(
-        requestLocalNotificationPermissions: LocalNotifications.requestPermissionLocalNotifications(), // Permisos solicitados al SO al abrir la app 
-        showLocalNotification: LocalNotifications.showLocalNotification,                               // Muestra local notification 
+  runApp(
+    MultiBlocProvider(
+      providers: 
+        [BlocProvider(create: (_) => NotificationsBloc(
+          requestLocalNotificationPermissions: LocalNotifications.requestPermissionLocalNotifications, // Permisos solicitados al SO al abrir la app 
+          showLocalNotification: LocalNotifications.showLocalNotification,                               // Muestra local notification 
       ))],
       child: const MainApp()));
 }
