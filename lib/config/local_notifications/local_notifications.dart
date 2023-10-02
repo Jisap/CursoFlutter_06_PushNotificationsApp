@@ -6,9 +6,9 @@ class LocalNotifications{
 
   static requestPermissionLocalNotifications() async{ // Función que solicita los permisos de local notifications al SO (Autoriza si o no)
 
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin(); // PLugin
+    await flutterLocalNotificationsPlugin                                                                      // Esperamos que para android,
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()                         // los permisos se activen al abrir la app
       ?.requestPermission();
   }
 
@@ -43,11 +43,11 @@ class LocalNotifications{
       priority: Priority.high,
     );
 
-    const notificationDetails = NotificationDetails(  // Instancia
+    const notificationDetails = NotificationDetails(  // Instancia de AndroidNotificationDetails
       android: androidDetails,
     );
 
-    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin(); // Permisos
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin(); // Instancia del plugin de LocalNotifications
 
     flutterLocalNotificationsPlugin.show( // Muestra la local notification con el payload y su configuración
       id, 

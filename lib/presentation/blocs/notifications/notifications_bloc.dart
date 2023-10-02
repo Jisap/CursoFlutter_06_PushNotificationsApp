@@ -6,7 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:push_app/domain/entities/push_message.dart';
 
-import '../../../config/local_notifications/local_notifications.dart';
+//import '../../../config/local_notifications/local_notifications.dart';
 import '../../../firebase_options.dart';
 
 part 'notifications_event.dart';
@@ -23,8 +23,20 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
   FirebaseMessaging messaging = FirebaseMessaging.instance;       // Permite escuchar y emitir notifications (instancia de firebase messagin)
   int pushNumberId = 0;
 
+  final Future<void> Function()? requestLocalNotificationPermissions; // Definimos un Future, espera una respuesta
+  final void Function({                                               // Definimos una función    
+    required int id,
+    String? title,
+    String? body,
+    String? data,
+  })? showLocalNotification;
+
   // Constructor
-  NotificationsBloc() : super(const NotificationsState()) {
+  NotificationsBloc({
+    this.requestLocalNotificationPermissions,
+    this.showLocalNotification
+  }) : super(const NotificationsState()) {
+
     on<NotificationStatusChanged>( _notificationsStatusChanged ); // Escuchamos la emisión del evento relativo al cambio de status -> nuevo estado -> token
     on<NotificationReveiced>(_onPushMessageReceived);             // Escuchamos la emisión del evento relativo al mensaje recibido -> nuevo estado
     _initialStatusCheck();                                        // Obtenemos el status actual -> evento cambio de status
@@ -80,12 +92,14 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
         : message.notification!.apple?.imageUrl
     );
       
-    LocalNotifications.showLocalNotification(
-      id: ++pushNumberId,// Establecemos id diferente de la push notification
-      body: notification.body,
-      data: notification.data.toString(),
-      title: notification.title,
-    );
+    if( showLocalNotification != null){
+      showLocalNotification!(
+        id: ++pushNumberId,// Establecemos id diferente de la push notification
+        body: notification.body,
+        data: notification.data.toString(),
+        title: notification.title,
+      );
+    }  
 
     add(NotificationReveiced(notification));                      // Añadimos el evento de recepción de mensajes al flujo de datos que Bloc escucha
   }
@@ -106,7 +120,9 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
       sound: true,
     );
 
-    await LocalNotifications.requestPermissionLocalNotifications(); // Solicitar permiso para las Local Notifications
+    if( requestLocalNotificationPermissions != null ){             // Comprobamos si el SO pidio los permisos para las LN
+      await requestLocalNotificationPermissions!();                // Si los pidio llamamos a la función del main -> localNotifications.requestPermissionLN
+    }                                                              // y activamos el permiso para mandar y recibir las LN
 
     add(NotificationStatusChanged( settings.authorizationStatus)); // Añadimos el evento de escucha del cambio de status al flujo de datos que Bloc está escuchando
   }
