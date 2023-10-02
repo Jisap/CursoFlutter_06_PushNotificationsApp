@@ -79,6 +79,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
   }
 
   void handleRemoteMessage( RemoteMessage message ){ // RemoteMessage recibe el mensaje enviado desde firebase
+    
     if (message.notification == null) return;  
 
     final notification = PushMessage( // RemoteMessage hay que "limpiarlo"
@@ -110,6 +111,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
 
   
   void requestPermission() async {                                     // Llamaremos a esta configuración cuando toquemos en la appbar el engrane 
+    
     NotificationSettings settings = await messaging.requestPermission( // requestPermission hace una solicitud al sistema operativo del dispositivo para mostrar notificaciones
       alert: true,
       announcement: false,
