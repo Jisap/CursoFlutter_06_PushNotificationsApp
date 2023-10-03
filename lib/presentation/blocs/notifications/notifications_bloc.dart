@@ -97,7 +97,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> { /
       showLocalNotification!(
         id: ++pushNumberId,// Establecemos id diferente de la push notification
         body: notification.body,
-        data: notification.data.toString(),
+        data: notification.messageId,
         title: notification.title,
       );
     }  
